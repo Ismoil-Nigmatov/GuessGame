@@ -37,8 +37,7 @@ thead {
 
 th {
     padding: 8px;
-    text-align: left;
-    width: calc(100%/3);
+    width: calc(100%/5);
 }
 
 tr {

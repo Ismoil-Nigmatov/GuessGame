@@ -31,9 +31,11 @@ const Login = () => {
                    })
                    .catch((error => {
                        setLogin(false);
+                       alert("Email or password incorrect")
                    }))
             } catch (error) {
                 console.log(error);
+                alert("Email or password incorrect")
             }
         }
         else
@@ -44,13 +46,16 @@ const Login = () => {
                     email: email,
                     password: password,
                 }
-                 await axios.post('https://localhost:7182/api/Auth/register', data);
+                 await axios.post('https://localhost:7182/api/Auth/register', data)
+                     .catch((error) => {
+                         alert("User already exist")
+                     })
             } catch (error) {
                 console.log(error);
+                window.location.reload();
             }
         }
     }
-    console.log(login)
 
     return (
 
@@ -106,7 +111,7 @@ const Login = () => {
                                         <span></span>
                                         <span></span>
                                         <span></span>
-                                        <button className="login-btn" type="submit">Login</button>
+                                        <button type="submit" className="login-btn" >Login</button>
                                     </a>
                                     <div className="sub">
                                         <p>Don't have an account ?</p>

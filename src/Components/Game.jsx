@@ -179,16 +179,27 @@ const Game = () => {
         setLeader(value);
     };
 
+    const logOut = () => {
+        sessionStorage.clear();
+        window.location.reload();
+    }
+
     return (
         <>
             {
                 leader === true ?
                     <>
-                        <Leaderboard toggleLeader={handleToggleLeader}/>
+                        <Leaderboard
+                            functions={{
+                                toggleLeader: handleToggleLeader,
+                                otherFunction: logOut,
+                            }}
+                        />
                     </>
                     :
                     <div>
-                        <h4 onClick={() => handleToggleLeader(true)} className="text-end text-white mt-5 me-5" style={{cursor: "pointer"}}>Leaderboard</h4>
+                        <h4 onClick={() => handleToggleLeader(true)} className="d-inline-block text-start text-white mt-5 m-lg-5" style={{cursor: "pointer"}}>Leaderboard</h4>
+                        <h4 onClick={() => logOut()} className="d-inline-block text-start text-white mt-5 m-lg-5" style={{cursor: "pointer"}}>Log out</h4>
                         <div>
                             <Toaster />
                         </div>
