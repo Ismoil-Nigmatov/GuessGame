@@ -1,0 +1,61 @@
+
+h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+
+ul {
+    list-style: none;
+    padding: 2rem !important;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+li {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+
+}
+
+
+
+thead {
+    background-color: #333;
+    color: white;
+    font-weight: bold;
+}
+
+
+th {
+    padding: 8px;
+    text-align: left;
+    width: calc(100%/3);
+}
+
+tr {
+    border-bottom: 1px solid #ddd;
+}
+
+
+td {
+    padding: 8px;
+    text-align: left;
+}
+
+
+.tr {
+    border: none;
+}
+.text{
+    font-size: 30px;
+    padding-bottom: 20px;
+}
