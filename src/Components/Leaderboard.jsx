@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import './Leaderboard.css';
-
+import  "bootstrap/dist/js/bootstrap.min"
 function LeaderBoard(props) {
     const [data, setData] = useState([]);
+    const [showingHistoryFor, setShowingHistoryFor] = useState(null);
+    const [itemId, setItemId] = useState(null);
     const { toggleLeader, otherFunction } = props.functions;
+
     useEffect(  () =>  {
         // run();
         const fetchData = async () => {
@@ -13,11 +16,12 @@ function LeaderBoard(props) {
                 const userData = response.data.map((leaderboardEntry) => {
                     const wins = leaderboardEntry.games.reduce((count, game) => count + (game.win ? 1 : 0), 0);
 
-                    // Find the minimum number of attempts
-                    const minAttempts = leaderboardEntry.games.reduce(
-                        (min, game) => (game.attempts < min ? game.attempts : min),
-                        Number.MAX_SAFE_INTEGER
-                    );
+                    const minAttempts = leaderboardEntry.games.length > 0
+                        ? leaderboardEntry.games.reduce(
+                            (min, game) => (game.attempts < min ? game.attempts : min),
+                            Number.MAX_SAFE_INTEGER
+                        )
+                        : 0;
 
                     return {
                         id: leaderboardEntry.id,
@@ -40,6 +44,11 @@ function LeaderBoard(props) {
         fetchData();
     }, []);
 
+    const toggleHistoryVisibility = (index, item) => {
+        setShowingHistoryFor(index === showingHistoryFor ? null : index);
+        setItemId(item);
+    };
+
     return (
         <div>
             <h4 className="d-inline-block text-start text-white mt-5 m-lg-5" style={{cursor:"pointer"}} onClick={() => toggleLeader(false)}>Game</h4>
@@ -56,6 +65,7 @@ function LeaderBoard(props) {
                                 <th>Played Games</th>
                                 <th>Wins</th>
                                 <th>User Attempt</th>
+                                <th>History</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -65,9 +75,49 @@ function LeaderBoard(props) {
                                 <td>{item.games.length}</td>
                                 <td>{item.wins}</td>
                                 <td>{item.minAttempts}</td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        id="dropdownMenuButton"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false"
+                                        onClick={() => toggleHistoryVisibility(index, item.id)}
+                                        className="bg-warning border-0 p-2 "
+                                    >
+                                        {showingHistoryFor === index ? 'Hide History' : 'Show History'}
+                                    </button>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
+                        {showingHistoryFor === index && (
+                            <div aria-labelledby="dropdownMenuButton">
+                                {data?.map((i) => {
+                                    return(
+                                        <>
+                                            {
+                                                (i.id === itemId) ?
+                                                    <div>
+                                                        {
+                                                            ((i.games[0] === undefined) ? <p>Oops!! No Games</p> :
+                                                                i.games[i.games.length - 1].description?.map((d, index) =>{
+                                                                return (
+                                                                    <p key={index}>{d}</p>
+                                                                )
+                                                            }))
+
+                                                        }
+                                                    </div>
+                                                    :
+                                                    <div>
+                                                    </div>
+                                            }
+                                        </>
+                                    )
+                                })}
+                            </div>
+                        )}
                     </li>
                 ))}
             </ul>
