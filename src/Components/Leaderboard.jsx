@@ -4,8 +4,9 @@ import './Leaderboard.css';
 import  "bootstrap/dist/js/bootstrap.min"
 function LeaderBoard(props) {
     const [data, setData] = useState([]);
-    const [showingHistoryFor, setShowingHistoryFor] = useState(null);
-    const [itemId, setItemId] = useState(null);
+    const [showingHistoryFor, setShowingHistoryFor] = useState(false);
+    const [item, setItem] = useState(null);
+    const [history, setHistory] = useState(null);
     const { toggleLeader, otherFunction } = props.functions;
 
     useEffect(  () =>  {
@@ -30,7 +31,7 @@ function LeaderBoard(props) {
                         password: leaderboardEntry.password,
                         games: leaderboardEntry.games,
                         wins: wins,
-                        minAttempts: minAttempts, // Minimum attempts
+                        minAttempts: minAttempts,
                     };
                 });
 
@@ -44,83 +45,111 @@ function LeaderBoard(props) {
         fetchData();
     }, []);
 
-    const toggleHistoryVisibility = (index, item) => {
-        setShowingHistoryFor(index === showingHistoryFor ? null : index);
-        setItemId(item);
+    const toggleHistoryVisibility = (value, item) => {
+        setShowingHistoryFor(value);
+        setItem(item);
+    };
+
+    const toggleDescription = (index) => {
+        setHistory((prevIndex) => (prevIndex === index ? null : index));
     };
 
     return (
         <div>
             <h4 className="d-inline-block text-start text-white mt-5 m-lg-5" style={{cursor:"pointer"}} onClick={() => toggleLeader(false)}>Game</h4>
+            {showingHistoryFor === true ? <h4 className="d-inline-block text-start text-white mt-5 m-lg-5" style={{cursor: "pointer"}} onClick={() => toggleHistoryVisibility(false)}>Leaderboard</h4> : <></>}
             <h4 className="d-inline-block text-start text-white mt-5 m-lg-5" style={{cursor: "pointer"}} onClick={otherFunction}>Log out</h4>
-            <h1 className='text-center'>Leaderboard</h1>
-            <ul>
-                {data.map((item, index) => (
-                    <li key={index}>
-                        <table className='table'>
-                            <thead className='thead'>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Played Games</th>
-                                <th>Wins</th>
-                                <th>User Attempt</th>
-                                <th>History</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr className='tr'>
-                                <td>{item.name}</td>
-                                <td>{item.email}</td>
-                                <td>{item.games.length}</td>
-                                <td>{item.wins}</td>
-                                <td>{item.minAttempts}</td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        id="dropdownMenuButton"
-                                        data-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="false"
-                                        onClick={() => toggleHistoryVisibility(index, item.id)}
-                                        className="bg-warning border-0 p-2 "
-                                    >
-                                        {showingHistoryFor === index ? 'Hide History' : 'Show History'}
-                                    </button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        {showingHistoryFor === index && (
-                            <div aria-labelledby="dropdownMenuButton">
-                                {data?.map((i) => {
-                                    return(
-                                        <>
-                                            {
-                                                (i.id === itemId) ?
-                                                    <div>
-                                                        {
-                                                            ((i.games[0] === undefined) ? <p>Oops!! No Games</p> :
-                                                                i.games[i.games.length - 1].description?.map((d, index) =>{
-                                                                return (
-                                                                    <p key={index}>{d}</p>
-                                                                )
-                                                            }))
-
-                                                        }
-                                                    </div>
-                                                    :
-                                                    <div>
-                                                    </div>
-                                            }
-                                        </>
-                                    )
-                                })}
-                            </div>
-                        )}
-                    </li>
-                ))}
-            </ul>
+            {
+                (showingHistoryFor === false) ?
+                    <div>
+                        <h1 className='text-center'>Leaderboard</h1>
+                        <ul>
+                            {data.map((item, index) => (
+                                <li key={index}>
+                                    <table className='table'>
+                                        <thead className='thead'>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Played Games</th>
+                                            <th>Wins</th>
+                                            <th>Best Attempt</th>
+                                            <th>History</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr className='tr'>
+                                            <td>{item.name}</td>
+                                            <td>{item.email}</td>
+                                            <td>{item.games.length}</td>
+                                            <td>{item.wins}</td>
+                                            <td>{item.minAttempts}</td>
+                                            <td>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleHistoryVisibility(true, item)}
+                                                    className="bg-warning border-0 p-2 "
+                                                >
+                                                    Show History
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    :
+                    <div>
+                        <h1 className='text-center'>History</h1>
+                        {
+                            item.games[0] === undefined ? <p className="text-center text-warning fs-1">Oops!! No Games</p>
+                            :
+                            <ul>
+                                {item?.games?.map((g, index) => (
+                                    console.log(g),
+                                    <li key={index}>
+                                        <table className='table'>
+                                            <thead className='thead'>
+                                            <tr>
+                                                <th>Attempts</th>
+                                                <th>Win</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr className='tr'>
+                                                <td>{g.attempts}</td>
+                                                <td>{g.win.toString()}</td>
+                                                <td>
+                                                    <button
+                                                    type="button"
+                                                    style={{width:'33%'}}
+                                                    className="bg-warning border-0 p-2"
+                                                    onClick={() => toggleDescription(index)}
+                                                    >
+                                                    {history === index ? 'Hide Description' : 'Show Description'}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        {history === index && (
+                                            <div>
+                                                <ul>
+                                                    {g.description.map((desc, index) => (
+                                                        <li key={index}>{desc}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        }
+                    </div>
+            }
         </div>
     );
 }

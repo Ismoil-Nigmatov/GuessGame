@@ -3,6 +3,7 @@ import {toast, Toaster} from "alert";
 import axios from "axios";
 import './Game.css'
 import Leaderboard from "./Leaderboard";
+import * as Bootstrap from "bootstrap";
 
 
 const Game = () => {
@@ -11,6 +12,8 @@ const Game = () => {
     const [array , setArray]  = useState([])
     const [start , setStart] = useState(false);
     const [leader , setLeader] = useState(false);
+    const [result , setResult] = useState('');
+    const [header , setHeader] = useState('');
     const [inputValues, setInputValues] = useState({
         input1: "",
         input2: "",
@@ -26,15 +29,18 @@ const Game = () => {
     };
 
     const handleInputChange = (e, inputName) => {
-        const { value } = e.target;
+        const {value} = e.target;
         if (/^\d*$/.test(value)) {
-            setInputValues({ ...inputValues, [inputName]: value });
+            setInputValues({...inputValues, [inputName]: value});
             if (value !== "") {
                 const nextInputName = `input${parseInt(inputName.slice(-1)) + 1}`;
                 if (inputRefs[nextInputName]) {
                     inputRefs[nextInputName].current.focus();
                 }
             }
+        }
+        else {
+            toast("Please enter only digits")
         }
     };
 
@@ -97,7 +103,7 @@ const Game = () => {
         inp.forEach(input => {
             input.removeAttribute("readOnly");
         });
-        button.removeAttribute("disabled");
+        button.setAttribute("type", 'submit');
         setStart(true);
     }
 
@@ -135,7 +141,11 @@ const Game = () => {
                         inp.forEach(input => {
                             input.setAttribute("readOnly", "Нет");
                         });
-                        button.setAttribute("disabled", "true");
+                        button.setAttribute("type", "button");
+                        setResult('bg-success');
+                        setHeader("Well , Done!")
+                        const modal = new Bootstrap.Modal(document.getElementById('exampleModalToggle'));
+                        modal.show();
                     }
                     else {
                         setStep((prev) => prev - 1);
@@ -145,7 +155,11 @@ const Game = () => {
                             inp.forEach(input => {
                                 input.setAttribute("readOnly", "Нет");
                             });
-                            button.setAttribute("disabled", "true");
+                            button.setAttribute("type", "button");
+                            setHeader("Sorry")
+                            setResult('bg-danger')
+                            const modal = new Bootstrap.Modal(document.getElementById('exampleModalToggle'));
+                            modal.show();
                         }
                     }
                 })
@@ -184,6 +198,20 @@ const Game = () => {
         window.location.reload();
     }
 
+    function handleInputFocus(e){
+        console.log(e.target);
+        if(e.target.readOnly) {
+            toast("Please start the game before entering a guess.");
+        }
+    }
+
+    function handleButton(){
+        const button = document.querySelector('.guess-btn');
+        if(button.getAttribute('type') === 'button'){
+            toast("Please start the game before entering a guess.");
+        }
+    }
+
     return (
         <>
             {
@@ -200,6 +228,20 @@ const Game = () => {
                     <div>
                         <h4 onClick={() => handleToggleLeader(true)} className="d-inline-block text-start text-white mt-5 m-lg-5" style={{cursor: "pointer"}}>Leaderboard</h4>
                         <h4 onClick={() => logOut()} className="d-inline-block text-start text-white mt-5 m-lg-5" style={{cursor: "pointer"}}>Log out</h4>
+
+                        <div className="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
+                            <div className="modal-dialog modal-dialog-centered">
+                                <div className="modal-content">
+                                    <div className={`modal-header border-0 ${result}`}>
+                                        <h2 className="modal-title text-white">{header}</h2>
+                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div className={`modal-body rounded-bottom text-white ${result}`}>
+                                        <p>{array[array.length-1]}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div>
                             <Toaster />
                         </div>
@@ -211,6 +253,7 @@ const Game = () => {
                                 <div className="d-flex gap-2">
                                     {Object.keys(inputValues).map((inputName) => (
                                         <input
+                                            required
                                             readOnly="Нет"
                                             key={inputName}
                                             ref={inputRefs[inputName]}
@@ -218,10 +261,17 @@ const Game = () => {
                                             onChange={(e) => handleInputChange(e, inputName)}
                                             onKeyDown={(e) => handleKeyDown(e, inputName)}
                                             maxLength="1"
+                                            onFocus={(e) => handleInputFocus(e)}
                                         />
                                     ))}
                                 </div>
-                                <button className="guess-btn text-white" type="submit" disabled={true}>Guess</button>
+                                <button
+                                    className="guess-btn text-white"
+                                    type="button"
+                                    onClick={handleButton}
+                                >
+                                    Guess
+                                </button>
                             </form>
                             <div className="attempts">
                                 <div className="green" style={{ width: `${width}%` }}></div>

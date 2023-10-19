@@ -66,3 +66,12 @@ td button{
     height: 0 !important;
     transition: .3s;
 }
+.dfgdf{
+    height: 0px !important;
+    transition: height 0.4s;
+}
+
+.active{
+    height: auto !important;
+    transition: height .5s;
+}
