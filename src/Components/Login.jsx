@@ -23,7 +23,7 @@ const Login = () => {
             }
             else {
                 toast("Please , wait!")
-                await axios.post('https://localhost:7182/api/Auth/login', data)
+                await axios.post(`${process.env.REACT_APP_API_URL}/api/Auth/login`, data)
                     .then((response) => {
                         if (response.data.startsWith("wrong")) {
                             setLogin(false);
@@ -57,7 +57,7 @@ const Login = () => {
                 toast(emailError)
             } else {
                 toast("Please , wait!")
-                await axios.post('https://localhost:7182/api/Auth/register', data)
+                await axios.post(`${process.env.REACT_APP_API_URL}/api/Auth/register`, data)
                     .then(response => {
                         toast("User successfully registered");
                         setEmail('');

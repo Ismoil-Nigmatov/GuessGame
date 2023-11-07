@@ -13,7 +13,7 @@ function LeaderBoard(props) {
         // run();
         const fetchData = async () => {
             try {
-                const response = await axios.get('https://localhost:7182/api/LeaderBoard');
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/LeaderBoard`);
                 const userData = response.data.map((leaderboardEntry) => {
                     const wins = leaderboardEntry.games.reduce((count, game) => count + (game.win ? 1 : 0), 0);
 

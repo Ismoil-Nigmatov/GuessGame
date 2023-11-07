@@ -81,7 +81,7 @@ const Game = () => {
         const newArray = [];
         setArray(newArray);
 
-        await axios.get('https://localhost:7182/api/Game',{
+        await axios.get(`${process.env.REACT_APP_API_URL}/api/Game`,{
             headers:{
                 Authorization:`Bearer ${token}`
             }
@@ -123,7 +123,7 @@ const Game = () => {
             };
             setInputValues(newInputValues);
             const sessionId = sessionStorage.getItem('sessionId')
-            const apiUrl = `https://localhost:7182/api/Game/guess/${sessionId}?userInput=${userInput}`
+            const apiUrl = `${process.env.REACT_APP_API_URL}/api/Game/guess/${sessionId}?userInput=${userInput}`
             axios.post(apiUrl, null, {
                 headers: {
                     Authorization: `Bearer ${token}`,
